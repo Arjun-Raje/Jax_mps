@@ -35,6 +35,8 @@ def get_data():
     test_data = MNIST(root="data", train=False, download=True,transform=Compose([ToTensor(), 
                                                                                     Lambda(transform)]))
     train_dataloader = NumpyLoader(training_data, batch_size=1, shuffle=True)
-    test_dataloader = NumpyLoader(test_data, batch_size=1, shuffle=True)
     
-    return train_dataloader, test_dataloader
+    trainacc_loader = NumpyLoader(training_data, batch_size=2000, shuffle=True)
+    test_dataloader = NumpyLoader(test_data, batch_size=2000, shuffle=True)
+    
+    return train_dataloader, trainacc_loader, test_dataloader
