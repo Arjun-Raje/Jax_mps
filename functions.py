@@ -20,10 +20,10 @@ def mps_network_params(size: int, chi: int, num_targets: int) -> list:
     """
     
     mps = []
-    first = jnp.array(onp.random.rand(2, chi) - 0.5)
+    first = jnp.array(jax.lax.abs(onp.random.rand(2, chi) - 0.5))
     mps.append(first)
     
-    middle = jnp.array(onp.random.rand(size-2, chi, 2, chi) - 0.5)
+    middle = jnp.array(jax.lax.abs(onp.random.rand(size-2, chi, 2, chi) - 0.5))
     mps.append(middle)
     #make middle a jax array
     '''
@@ -31,8 +31,8 @@ def mps_network_params(size: int, chi: int, num_targets: int) -> list:
         middle = middle.at[i].set(jnp.ones([chi,2,chi]))
     mps.append(middle)
     '''
-    
-    mps.append(jnp.zeros([chi,2,num_targets]))
+    last = jnp.array(jax.lax.abs(onp.random.rand(chi,2,num_targets) - 0.5))
+    mps.append(last)
     return mps
 
 @jit
