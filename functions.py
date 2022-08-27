@@ -8,8 +8,8 @@ import numpy as np
 from torch.utils import data
 from torchvision.datasets import MNIST
 import torch
+    
 
-##can't use ones use identity matrices
 def mps_network_params(size: int, chi: int, num_targets: int) -> list:
     """
     size: the amount of tensors in the mps and the number pixels in the images
@@ -20,10 +20,13 @@ def mps_network_params(size: int, chi: int, num_targets: int) -> list:
     """
     
     mps = []
-    first = jnp.array(jax.lax.abs(onp.random.rand(2, chi) - 0.5))
+    first = jnp.array(onp.random.rand(2, chi) - 0.5)
     mps.append(first)
     
-    middle = jnp.array(jax.lax.abs(onp.random.rand(size-2, chi, 2, chi) - 0.5))
+    middle = np.stack(np.eye(chi) for i in range((size-2) * 2))
+    middle.reshape([size-2, 2, chi, chi]).transpose([0, 3, 1, 2])
+    
+    middle += 1e-4 * onp.random.normal(size = middle.shape)
     mps.append(middle)
     #make middle a jax array
     '''
@@ -31,7 +34,7 @@ def mps_network_params(size: int, chi: int, num_targets: int) -> list:
         middle = middle.at[i].set(jnp.ones([chi,2,chi]))
     mps.append(middle)
     '''
-    last = jnp.array(jax.lax.abs(onp.random.rand(chi,2,num_targets) - 0.5))
+    last = jnp.array(onp.random.rand(chi,2,num_targets) - 0.5)
     mps.append(last)
     return mps
 
