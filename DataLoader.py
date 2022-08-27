@@ -34,6 +34,7 @@ def get_data():
                                                                                         Lambda(transform)]))
     test_data = MNIST(root="data", train=False, download=True,transform=Compose([ToTensor(), 
                                                                                     Lambda(transform)]))
+    training_data = torch.utils.data.Subset(training_data, list(range(1000)))
     train_dataloader = NumpyLoader(training_data, batch_size=1, shuffle=True)
     
     trainacc_loader = NumpyLoader(training_data, batch_size=2000, shuffle=True)
