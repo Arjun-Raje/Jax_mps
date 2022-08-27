@@ -24,7 +24,7 @@ def mps_network_params(size: int, chi: int, num_targets: int) -> list:
     mps.append(first)
     
     middle = np.stack(np.eye(chi) for i in range((size-2) * 2))
-    middle.reshape([size-2, 2, chi, chi]).transpose([0, 3, 1, 2])
+    middle = middle.reshape((size-2, 2, chi, chi)).transpose([0, 3, 1, 2])
     
     middle += 1e-4 * onp.random.normal(size = middle.shape)
     mps.append(middle)
@@ -100,9 +100,11 @@ def loss(params: list, images: np.array, target: int) -> float:
     target: the target value
     """
     preds = batched_predict(params, images)
-    softmax_preds = jax.nn.softmax(preds)
+    softmax_preds = jax.nn.log_softmax(preds)
     labels = jax.nn.one_hot(target, 10)
-    return -jnp.sum(jnp.log2(preds) * target)
+    loss = -jnp.sum(softmax_preds * labels)
+    loss /= labels.shape[0]
+    return loss
 
 
 @jit
